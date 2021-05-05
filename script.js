@@ -1,11 +1,17 @@
+//buttons & EventListener
+const generateColorButton = document.querySelector("#GenerateColorButton");
+const saveColorButton = document.querySelector("#SaveColorButton");
+generateColorButton.addEventListener("click", changeColor);
+saveColorButton.addEventListener("click", saveColor);
+
 //variables
-const generateColorButton = document.querySelector("#but1");
-const saveColorButton = document.querySelector("#but2");
-const initHeadColor = document.querySelector("header");
-let headColor;
-let colors = [];
-let currentColor = null;
+const headerFromDom = document.querySelector("#header");
 const colorValue = document.querySelector("#typoColor");
+const list = document.querySelector("#colors");
+const li = document.createElement("li");
+let headColor = null;
+let colors = [];
+///let currentColor = null;
 colorValue.textContent = headColor;
 
 //functions for intial page setup
@@ -13,18 +19,19 @@ changeColor();
 restoreFromLocal();
 colors.forEach(restoreList);
 
-//change color im header
+/**
+ *  change color im header
+ */
 function changeColor() {
   //variables
-  const header = document.querySelector("header");
-  const currentBackgroundColor = header.style.backgroundColor.toLowerCase();
+  //const header = document.querySelector("header");
+  //const currentBackgroundColor = headerFromDom.style.backgroundColor.toLowerCase();
 
   //set color wiht value from random
   headColor = randomHexColor();
   header.style.backgroundColor = headColor;
   colorValue.textContent = headColor;
 
-  //this is for check whether saveButton is diabled or not
   updateSaveButtonStatus();
 }
 
@@ -59,68 +66,65 @@ function randomHexColor() {
   return ("#" + red + green + blue).toUpperCase();
 }
 
-//save display color to list
+/**
+ * save display color to list
+ */
 function saveColor() {
   //variables
-  const currentHeader = document.querySelector("header");
-  const currentBgColor = currentHeader.style.backgroundColor.toLowerCase();
-  const list = document.querySelector("#colors");
-  const li = document.createElement("li");
-
-  //update currentcolor
-  currentColor = headColor;
+  //const currentHeader = document.querySelector("header");
+  //const currentBgColor = currentHeader.style.backgroundColor.toLowerCase();
 
   //duplicate check currentcolor vs. Array
-  let check = colors.includes(currentColor);
+  let check = colors.includes(headColor);
+  // if color already included ignore the following code of this function
+  if (check === true) {
+    return;
+  }
 
-  //this is for check whether saveButton is diabled or not
+  //update currentcolor
+  //currentColor = headColor;
+
   updateSaveButtonStatus();
 
-  //delete button
+  //write Color to Array
+  colors.push(headColor);
+
+  //push color to list
+  li.textContent = headColor;
+  li.style.backgroundColor = headColor;
+  li.setAttribute("data-color", headColor);
+  li.style.marginBottom = "5px";
+  li.style.padding = "10px";
+  li.style.border = "10px, solid, yellow";
+  li.style.color = "white";
+  //li.style.border-radius = "20px";
+  //li.style.display = block;
+  list.appendChild(li);
+
+  //create delete button
   const deleteBtn = document.createElement("button");
   deleteBtn.innerText = "Delete";
   deleteBtn.addEventListener("click", deleteColor);
+  li.appendChild(deleteBtn);
 
-  //write Color to Array, if not already included
-  if (check === false) {
-    colors.push(headColor);
-
-    //push color to list
-    list.appendChild(li);
-    li.textContent = headColor;
-    li.style.backgroundColor = headColor;
-    li.setAttribute("data-color", headColor);
-    li.style.marginBottom = "5px";
-    li.style.padding = "10px";
-    li.style.border = "10px, solid, yellow";
-    li.style.color = "white";
-    //li.style.border-radius = "20px";
-    //li.style.display = block;
-    li.appendChild(deleteBtn);
-  }
-  //this is for check whether saveButton is diabled or not
   updateSaveButtonStatus();
 
-  //update local storage with content from Array
-  saveLocal();
+  saveArrayToLocalStorage();
 }
 
-//update saveButton
-function updateSaveButtonStatus() {
-  const saveButton = document.querySelector("#but2");
-  const list = document.querySelector("#colors");
+/**
+ * this is for check whether saveButton is diabled or not
+ */ function updateSaveButtonStatus() {
+  //const saveButton = document.querySelector("#SaveColorButton");
+  //const list = document.querySelector("#colors");
   let check = colors.includes(headColor);
 
   if (check === true) {
-    saveButton.setAttribute("disabled", "");
+    saveColorButton.setAttribute("disabled", "");
   } else {
-    saveButton.removeAttribute("disabled");
+    saveColorButton.removeAttribute("disabled");
   }
 }
-
-//buttons & EventListener
-generateColorButton.addEventListener("click", changeColor);
-saveColorButton.addEventListener("click", saveColor);
 
 //function to delete color list item
 function deleteColor(event) {
@@ -130,32 +134,31 @@ function deleteColor(event) {
   console.log(colorValue);
 
   //get index of color in the Array
-  let deleteColorIndex = colors.indexOf(colorLiElement);
+  let deleteColorIndex = colors.indexOf(colorValue);
   console.log(deleteColorIndex);
 
   //delete the choosed color in the Array
   colors.splice(deleteColorIndex, 1);
 
-  //update local storage with content from Array
-  saveLocal();
+  saveArrayToLocalStorage();
 
   //delete Element from list
   colorLiElement.remove();
 
-  //this is for check whether saveButton is diabled or not
   updateSaveButtonStatus();
 }
 
-//write the current Array to the local storage
-function saveLocal() {
-  //variables
-  const colorID = colors;
-
+/**
+ * write the current Array to the local storage
+ */
+function saveArrayToLocalStorage() {
   //make a string from the Arry and store it in the brwoser local storage
-  localStorage.setItem("arr", JSON.stringify(colorID));
+  localStorage.setItem("arr", JSON.stringify(colors));
 }
 
-//restore the page (list and Array) from the local storage
+/**
+ * //restore the page (list and Array) from the local storage
+ */
 function restoreFromLocal() {
   //variables / get JSON-string and parse it
   let colorsFromStorage = JSON.parse(localStorage.getItem("arr"));
@@ -185,7 +188,6 @@ function restoreList(color) {
   //li.style.border-radius = "20px";
   //li.style.display = block;
 
-  //this is for check whether saveButton is diabled or not
   updateSaveButtonStatus();
 
   //delete button
