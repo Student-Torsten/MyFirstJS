@@ -131,6 +131,7 @@ function deleteColor(event) {
 
   //get index of color in the Array
   let deleteColorIndex = colors.indexOf(colorLiElement);
+  console.log(deleteColorIndex);
 
   //delete the choosed color in the Array
   colors.splice(deleteColorIndex, 1);
