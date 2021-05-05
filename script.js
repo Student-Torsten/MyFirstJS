@@ -1,11 +1,24 @@
 //variables
+
+// TODO: IDs der Buttons im HTML eindeutiger / sprechender gestalten
 const generateColorButton = document.querySelector("#but1");
 const saveColorButton = document.querySelector("#but2");
+
+// Potentielle Gefahr, wenn mehr Header Elemente hinzukommen, z.B. ID anfügen
+// Leiche aus Overengineering
 const initHeadColor = document.querySelector("header");
-let headColor;
-let colors = [];
-let currentColor = null;
+
+// Bewusst einen initial Wert setzen
+let headColor; // = undefined;
+
+// Ermitteln von HTML Elementen gern auf einen Fleck ziehen
 const colorValue = document.querySelector("#typoColor");
+// Ungenutzte Variablen löschen
+let currentColor = null;
+
+let colors = [];
+
+// TODO: ...
 colorValue.textContent = headColor;
 
 //functions for intial page setup
@@ -13,10 +26,14 @@ changeColor();
 restoreFromLocal();
 colors.forEach(restoreList);
 
-//change color im header
+/**
+ * change color im header
+ */
 function changeColor() {
   //variables
+  // Prüfen ob das eine globale Variable sein könnte
   const header = document.querySelector("header");
+  // Unused variable (leiche)
   const currentBackgroundColor = header.style.backgroundColor.toLowerCase();
 
   //set color wiht value from random
@@ -61,31 +78,42 @@ function randomHexColor() {
 
 //save display color to list
 function saveColor() {
+  // TODO: gleich am anfang abfragen, ob es die Farbe schon gibt (ob die schon gespeichert ist)
+  /*
+  let check = colors.includes(currentColor);
+  if (check === true) {
+    return;
+  }
+  */
+
   //variables
+  // Leiche
   const currentHeader = document.querySelector("header");
   const currentBgColor = currentHeader.style.backgroundColor.toLowerCase();
+
+  // Create list element, delete button and text
   const list = document.querySelector("#colors");
   const li = document.createElement("li");
-
-  //update currentcolor
-  currentColor = headColor;
-
-  //duplicate check currentcolor vs. Array
-  let check = colors.includes(currentColor);
-
-  //this is for check whether saveButton is diabled or not
-  updateSaveButtonStatus();
-
-  //delete button
   const deleteBtn = document.createElement("button");
   deleteBtn.innerText = "Delete";
   deleteBtn.addEventListener("click", deleteColor);
 
-  //write Color to Array, if not already included
+  //update currentcolor
+  // Entweder currentColor oder headColor verwenden
+  currentColor = headColor;
+
+  //this is for check whether saveButton is diabled or not
+  updateSaveButtonStatus();
+
+  //duplicate check currentcolor vs. Array
+  // write Color to Array, if not already included
+  let check = colors.includes(currentColor);
   if (check === false) {
     colors.push(headColor);
 
     //push color to list
+
+    // TODO: einhängen in den DOM immer am Ende machen, wenn alle Eigenschaften gesetzt sind
     list.appendChild(li);
     li.textContent = headColor;
     li.style.backgroundColor = headColor;
@@ -98,16 +126,21 @@ function saveColor() {
     //li.style.display = block;
     li.appendChild(deleteBtn);
   }
-  //this is for check whether saveButton is diabled or not
+
   updateSaveButtonStatus();
 
   //update local storage with content from Array
+  // saveColorsToLocalStorage();
   saveLocal();
 }
 
-//update saveButton
+/**
+ * this is for check whether saveButton is diabled or not
+ */
 function updateSaveButtonStatus() {
+  // TODO: da gibts ne globale variable
   const saveButton = document.querySelector("#but2");
+  // TODO: leiche
   const list = document.querySelector("#colors");
   let check = colors.includes(headColor);
 
@@ -119,6 +152,7 @@ function updateSaveButtonStatus() {
 }
 
 //buttons & EventListener
+// TODO: prüfen ob man das addEventListener zur Deklaration der button variablen ziehen kann
 generateColorButton.addEventListener("click", changeColor);
 saveColorButton.addEventListener("click", saveColor);
 
@@ -127,9 +161,12 @@ function deleteColor(event) {
   //variables
   const colorLiElement = event.target.parentElement;
   let colorValue = colorLiElement.getAttribute("data-color");
+
+  // TODO: console logs langfristig entfernen
   console.log(colorValue);
 
   //get index of color in the Array
+  // TODO: use colorValue
   let deleteColorIndex = colors.indexOf(colorLiElement);
 
   //delete the choosed color in the Array
@@ -148,6 +185,7 @@ function deleteColor(event) {
 //write the current Array to the local storage
 function saveLocal() {
   //variables
+  // TODO: variable wird nicht gebraucht
   const colorID = colors;
 
   //make a string from the Arry and store it in the brwoser local storage
