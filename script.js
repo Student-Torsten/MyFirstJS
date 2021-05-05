@@ -7,8 +7,7 @@ saveColorButton.addEventListener("click", saveColor);
 //variables
 const headerFromDom = document.querySelector("#header");
 const colorValue = document.querySelector("#typoColor");
-const list = document.querySelector("#colors");
-const li = document.createElement("li");
+
 let headColor = null;
 let colors = [];
 ///let currentColor = null;
@@ -17,16 +16,11 @@ colorValue.textContent = headColor;
 //functions for intial page setup
 changeColor();
 restoreFromLocal();
-colors.forEach(restoreList);
 
 /**
  *  change color im header
  */
 function changeColor() {
-  //variables
-  //const header = document.querySelector("header");
-  //const currentBackgroundColor = headerFromDom.style.backgroundColor.toLowerCase();
-
   //set color wiht value from random
   headColor = randomHexColor();
   header.style.backgroundColor = headColor;
@@ -70,10 +64,6 @@ function randomHexColor() {
  * save display color to list
  */
 function saveColor() {
-  //variables
-  //const currentHeader = document.querySelector("header");
-  //const currentBgColor = currentHeader.style.backgroundColor.toLowerCase();
-
   //duplicate check currentcolor vs. Array
   let check = colors.includes(headColor);
   // if color already included ignore the following code of this function
@@ -81,18 +71,30 @@ function saveColor() {
     return;
   }
 
-  //update currentcolor
-  //currentColor = headColor;
-
   updateSaveButtonStatus();
 
   //write Color to Array
   colors.push(headColor);
 
+  newListElement(headColor);
+
+  saveArrayToLocalStorage();
+}
+/**
+ * create a new color in the list
+ * @param {*} color
+ */
+function newListElement(color) {
+  //variables
+  //const currentHeader = document.querySelector("header");
+  //const currentBgColor = currentHeader.style.backgroundColor.toLowerCase();
+  const list = document.querySelector("#colors");
+  const li = document.createElement("li");
+
   //push color to list
-  li.textContent = headColor;
-  li.style.backgroundColor = headColor;
-  li.setAttribute("data-color", headColor);
+  li.textContent = color;
+  li.style.backgroundColor = color;
+  li.setAttribute("data-color", color);
   li.style.marginBottom = "5px";
   li.style.padding = "10px";
   li.style.border = "10px, solid, yellow";
@@ -108,15 +110,11 @@ function saveColor() {
   li.appendChild(deleteBtn);
 
   updateSaveButtonStatus();
-
-  saveArrayToLocalStorage();
 }
 
 /**
  * this is for check whether saveButton is diabled or not
  */ function updateSaveButtonStatus() {
-  //const saveButton = document.querySelector("#SaveColorButton");
-  //const list = document.querySelector("#colors");
   let check = colors.includes(headColor);
 
   if (check === true) {
@@ -131,11 +129,9 @@ function deleteColor(event) {
   //variables
   const colorLiElement = event.target.parentElement;
   let colorValue = colorLiElement.getAttribute("data-color");
-  console.log(colorValue);
 
   //get index of color in the Array
   let deleteColorIndex = colors.indexOf(colorValue);
-  console.log(deleteColorIndex);
 
   //delete the choosed color in the Array
   colors.splice(deleteColorIndex, 1);
@@ -168,31 +164,5 @@ function restoreFromLocal() {
     //only if local storage is not empty, update the Array with the content
     colors = colorsFromStorage;
   }
-}
-
-//restore the list of memorized colors from the updated Array
-function restoreList(color) {
-  //variables
-  const list = document.querySelector("#colors");
-  const li = document.createElement("li");
-  li.setAttribute("data-color", color);
-
-  //add Color from restored array to the list
-  list.appendChild(li);
-  li.textContent = color;
-  li.style.backgroundColor = color;
-  li.style.marginBottom = "5px";
-  li.style.padding = "10px";
-  li.style.border = "10px, solid, yellow";
-  li.style.color = "white";
-  //li.style.border-radius = "20px";
-  //li.style.display = block;
-
-  updateSaveButtonStatus();
-
-  //delete button
-  const deleteBtn = document.createElement("button");
-  deleteBtn.innerText = "Delete";
-  deleteBtn.addEventListener("click", deleteColor);
-  li.appendChild(deleteBtn);
+  colors.forEach(newListElement);
 }
